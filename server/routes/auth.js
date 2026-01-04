@@ -49,7 +49,12 @@ router.post('/login', async (req, res) => {
     const db = getDB();
     const user = await db.get('SELECT * FROM users WHERE username = ?', [username]);
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (!user) {
+      console.log(`Login failed: User '${username}' not found`);
+      return res.status(400).send('Invalid Credentials');
+    }
+
+    if (await bcrypt.compare(password, user.password)) {
       const token = jwt.sign(
         { user_id: user.id, username },
         process.env.TOKEN_KEY || 'secret_key',
@@ -57,6 +62,7 @@ router.post('/login', async (req, res) => {
       );
       return res.status(200).json({ ...user, token });
     }
+    console.log(`Login failed: Password mismatch for user '${username}'`);
     res.status(400).send('Invalid Credentials');
   } catch (err) {
     console.log(err);

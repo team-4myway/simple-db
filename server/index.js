@@ -29,7 +29,12 @@ if (cluster.isPrimary) {
   // Workers can share any TCP connection
   const app = express();
 
-  app.use(cors());
+  app.use(cors({
+    origin: ['http://idal.cc', 'http://idal.cc:5000', 'http://idal.cc:4173', 'http://localhost:5173', 'http://localhost:4173'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
   app.use(express.json());
 
   // Initialize DB
