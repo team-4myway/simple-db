@@ -28,13 +28,14 @@ export default function Dashboard() {
 
   const fetchFiles = async () => {
     try {
-      const res = await axios.get('${import.meta.env.VITE_API_URL}/api/files/list', {
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/files/list`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { parent_id: currentFolder }
       });
-      setFiles(res.data);
+      setFiles(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error(err);
+      setFiles([]);
     }
   };
 
@@ -136,7 +137,7 @@ export default function Dashboard() {
   // --- 1. POST VIEW (Gallery) ---
   const renderPostView = () => (
     <div className="d-flex flex-column gap-5 py-4">
-        {files.map(file => (
+        {Array.isArray(files) && files.map(file => (
             <div key={file.id} className="d-flex justify-content-center position-relative group-action-container">
                 {/* Delete Button (Visible on Hover or nice placement) */}
                 <div className="position-absolute top-0 end-0 translate-middle-y me-2" style={{zIndex: 10, maxWidth: '600px', width:'100%', display:'flex', justifyContent:'flex-end'}}>
