@@ -4,6 +4,8 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
+const API_URL = '';
+
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -13,9 +15,9 @@ export default function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('API URL:', import.meta.env.VITE_API_URL); // Debugging
+    console.log('API URL:', API_URL); // Debugging
     try {
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/auth/login`, { username, password });
+      const res = await axios.post(`${API_URL}/api/auth/login`, { username, password });
       login(res.data.token, res.data);
       navigate('/');
     } catch (err) {

@@ -4,6 +4,8 @@ import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 import { useSearchParams } from 'react-router-dom';
 
+const API_URL = ''; // Relative path for proxying
+
 export default function Dashboard() {
   const [files, setFiles] = useState([]);
   const [uploading, setUploading] = useState(false);
@@ -28,7 +30,7 @@ export default function Dashboard() {
 
   const fetchFiles = async () => {
     try {
-      const res = await axios.get(`${import.meta.env.VITE_API_URL}/api/files/list`, {
+      const res = await axios.get(`${API_URL}/api/files/list`, {
         headers: { Authorization: `Bearer ${token}` },
         params: { parent_id: currentFolder }
       });
@@ -76,7 +78,7 @@ export default function Dashboard() {
 
     setUploading(true);
     try {
-      await axios.post('${import.meta.env.VITE_API_URL}/api/files/upload', formData, {
+      await axios.post(`${API_URL}/api/files/upload`, formData, {
         headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'multipart/form-data' }
       });
       fetchFiles();
@@ -95,7 +97,7 @@ export default function Dashboard() {
   const handleCreateFolder = async () => {
       if(!newFolderName.trim()) return;
       try {
-          await axios.post('${import.meta.env.VITE_API_URL}/api/files/create-folder', { name: newFolderName, parent_id: currentFolder }, { headers: { Authorization: `Bearer ${token}` } });
+          await axios.post(`${API_URL}/api/files/create-folder`, { name: newFolderName, parent_id: currentFolder }, { headers: { Authorization: `Bearer ${token}` } });
           setNewFolderName('');
           setShowCreateFolder(false);
           fetchFiles();
@@ -105,7 +107,7 @@ export default function Dashboard() {
   const handleDelete = async (fileId) => {
       if(!window.confirm("Really delete this file?")) return;
       try {
-          await axios.delete(`${import.meta.env.VITE_API_URL}/api/files/delete/${fileId}`, { headers: { Authorization: `Bearer ${token}` } });
+          await axios.delete(`${API_URL}/api/files/delete/${fileId}`, { headers: { Authorization: `Bearer ${token}` } });
           fetchFiles();
           setPreviewFile(null);
       } catch (error) {}
@@ -113,7 +115,7 @@ export default function Dashboard() {
 
   const handleDownload = async (fileId, fileName) => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/files/download/${fileId}`, {
+        const response = await axios.get(`${API_URL}/api/files/download/${fileId}`, {
             headers: { Authorization: `Bearer ${token}` },
             responseType: 'blob',
         });
@@ -158,7 +160,7 @@ export default function Dashboard() {
                 ) : isImage(file.original_name) ? (
                     <div style={{ position: 'relative', width: '100%', maxWidth: '600px', display: 'flex', justifyContent: 'center' }}>
                         <img 
-                            src={`${import.meta.env.VITE_API_URL}/api/files/content/${file.id}?token=${token}`} 
+                            src={`${API_URL}/api/files/content/${file.id}?token=${token}`} 
                             alt={file.original_name}
                             style={{ width: '100%', height: 'auto', maxHeight: '85vh', objectFit: 'contain', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', borderRadius: '8px' }}
                             onClick={() => setPreviewFile(file)}
@@ -286,7 +288,7 @@ export default function Dashboard() {
              <Button variant="primary" className="position-absolute top-0 start-0 m-3" onClick={() => handleDownload(previewFile.id, previewFile.original_name)}>Download</Button>
              {previewFile && (
                  <img 
-                    src={`${import.meta.env.VITE_API_URL}/api/files/content/${previewFile.id}?token=${token}`} 
+                    src={`${API_URL}/api/files/content/${previewFile.id}?token=${token}`} 
                     style={{maxWidth: '100%', maxHeight: '90vh'}} 
                  />
              )}
